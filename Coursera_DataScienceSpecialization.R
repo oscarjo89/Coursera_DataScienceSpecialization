@@ -1407,6 +1407,89 @@ qplot(displ, hwy, data = mpg, facets = drv~., binwidth = 2)
 # Raw data -> Processing script -> tidy data -> data analysis -> data communication
 
 
+# Week 1: Finding data and reading different file types ------------------------------------------------------------------
+
+# Components of tidy data
+# 1. The raw data
+# 2. A tidy data set
+# 3. A code book describing each variable and its values in the tidy data set
+# 4. An explicit and exact recipe you used to go from 1->2,3
+
+# Downloading files
+
+getwd()
+# setwd()
+# relative setwd("./data") to the file named data in wd, setwd("../") up one level from current wd
+# absolute setwd("/Users/jtleek/data/")
+# Important difference in Windows \ instead of /
+# \\vis-srv\brukere$\Oscar.Haavardsholm\Desktop\Coursera_Data_Science
+# C:/Users/Oscar/Desktop/Coursera_DataScienceSpecialization
+
+# setwd("//vis-srv/brukere$/Oscar.Haavardsholm/Desktop/Coursera_Data_Science")
+setwd("C:/Users/Oscar/Desktop/Coursera_DataScienceSpecialization")
+getwd()
+
+# Checking for and creating directories
+if (!file.exists("data")) {
+  dir.create("data")
+}
+
+## Getting data from the internet
+
+#download.file()
+fileUrl <- "https://data.baltimorecity.gov/api/views7dz54-2aru/rows.csv?accessType=DOWNLOAD"
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile = "./data/cameras.csv")
+
+# sometimes need to put in argument , method = "curl" (if mac or linux?)
+
+list.files("./data")
+
+dataDownloaded <- date()
+dataDownloaded
+
+## Reading local flat files
+# read.table()
+cameraData <- read.table("./data/cameras.csv", sep = ",", header = TRUE)
+head(cameraData)
+
+cameraData <- read.csv("./data/cameras.csv")
+head(cameraData)
+
+# quote - you can tell R wheather there are any quoted values quote="" means no quotes
+
+## Reading excel files
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile = "./data/cameras.xlsx")
+dataDownloaded <- date()
+
+install.packages("xlsx")
+library(xlsx)
+
+cameraData <- read.xlsx("./data/cameras.xlsx", sheetIndex=1, header=TRUE)
+head(cameraData)
+
+system("java -version")
+# problemer med rJava versjon?
+
+# Readig XML
+
+# tags corespond to general labels
+# <selection>
+
+library(XML)
+fileUrl <- 
+
+# Reading JSON
+# The data.table package
+
+
+
+# Week 2: Introduction to the most common data storage systems and the appropriate tools to extract data from web or from databases like MySQL ------------------------------------------------------------------
+
+# Week 3: Organizing, merging and managing the data ------------------------------------------------------------------
+
+# Week 4: Text and date manipulation in R ------------------------------------------------------------------
 
 
 ###########
