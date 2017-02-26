@@ -1463,33 +1463,225 @@ fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessTy
 download.file(fileUrl, destfile = "./data/cameras.xlsx")
 dataDownloaded <- date()
 
+install.packages("rJava")
+library(rJava)
+
 install.packages("xlsx")
 library(xlsx)
 
+install.packages("openxlsx")
+library(openxlsx)
+
+install.packages("readxl")
+library(readxl)
+
+??readxl
 cameraData <- read.xlsx("./data/cameras.xlsx", sheetIndex=1, header=TRUE)
 head(cameraData)
+
+?read.xlsx
 
 system("java -version")
 # problemer med rJava versjon?
 
-# Readig XML
+## Readig XML
+# web-scraping and API
+# https://en.wikipedia.org/wiki/XML
 
 # tags corespond to general labels
 # <selection>
 
+install.packages("XML")
 library(XML)
-fileUrl <- 
+fileUrl <- "http://www.w3schools.com/xml/simple.xml"
+fileUrl
+?xmlTreeParse
+doc <- xmlTreeParse(fileUrl, useInternalNodes = TRUE)
+doc
+rootNode <- xmlRoot(doc)
+xmlName(rootNode)
 
-# Reading JSON
-# The data.table package
+names(rootNode)
+rootNode[[1]]
+rootNode[[1]][[1]]
+
+xmlSApply(rootNode,xmlValue)
+
+xpathSApply(rootNode, "//name", xmlValue)
+xpathSApply(rootNode, "//price", xmlValue)
+
+fileUrl <- "http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens"
+doc <- htmlTreeParse(fileUrl, useInternalNodes = TRUE)
+doc
+scores <- xpathSApply(doc, "//li[@class='score']", xmlValue)
+teams <- xpathSApply(doc, "//li[@class='teame-name']", xmlValue)
+scores
+teams
+
+## Reading JSON
+
+# https://en.wikipedia.org/wiki/JSON
+
+library(jsonlite)
+jsonData <- fromJSON("https://api.github.com/users/jtleek/repos")
+#https://api.github.com/users/jtleek/repos
+names(jsonData)
+names(jsonData$owner)
+names(jsonData$owner$login)
+
+myjson <- toJSON(iris, pretty = TRUE)
+cat(myjson)
+
+iris2 <- fromJSON(myjson)
+head(iris2)
+
+## The data.table package
+library(data.table)
+DF = data.frame(x = rnorm(9) , y = rep(c("a", "b", "c"), each = 3), z = rnorm(9))
+head(DF, 3)
+
+DT = data.table(x = rnorm(9) , y = rep(c("a", "b", "c"), each = 3), z = rnorm(9))
+head(DF, 3)
+
+tables()
+DT[2,]
+DT[DT$y=="a", ]
+DT[c(2,3)]
+DT[ ,c(2,3)]
+DT[,list(mean(x),sum(z))]
+DT[,table(y)]
+DT[,w:=z^2]
+DT
+DT[ , m := {tmp <- (x + z); log2(tmp + 5)}]
+DT
+DT[ , a := x >0]
+DT
+DT[ , b := mean(x + w), by = a]
+DT
+
+
+set.seed(123);
+DT <- data.table(x = sample(letters[1:3], 1E5, TRUE))
+DT[ , .N, by = x]
+
+DT <- data.table(x = rep(c("a", "b", "c"), each = 100), y = rnorm(300))
+setkey(DT, x)
+DT['a']
+
+DT1 <- data.table(x = c('a', 'a', 'b', 'dt1'), y = 1:4)
+DT2 <- data.table(x = c('a', 'b', 'dt2'), z = 5:7)
+setkey(DT1, x); setkey(DT2, x)
+merge(DT1, DT2)
+
+
+# Practical R exercises in swirl
+R.version.string
+ls()
+rm(list = ls())
+
+install.packages("swirl")
+packageVersion("swirl")
+library(swirl)
+install_from_swirl("Getting and Cleaning Data")
+swirl()
+Oscar
+
+#| You can exit swirl and return to the R prompt (>) at any time by pressing the Esc key. If you are already at the prompt, type bye()
+#| to exit and save your progress. When you exit properly, you'll see a short message letting you know you've done so.
+
+#| When you are at the R prompt (>):
+#  | -- Typing skip() allows you to skip the current question.
+#| -- Typing play() lets you experiment with R on your own; swirl will ignore what you do...
+#| -- UNTIL you type nxt() which will regain swirl's attention.
+#| -- Typing bye() causes swirl to exit. Your progress will be saved.
+#| -- Typing main() returns you to swirl's main menu.
+#| -- Typing info() displays these options again.
+
+
+# Quiz Week 1 -------------------------------------------------------------
+
+#Q1.
+fileUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
+download.file(fileUrl, destfile = "./data/housingIdaho.csv")
+
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FPUMSDataDict06.pdf", destfile = "./data/housingIdaho.pdf" )
+
+list.files("./data")
+
+dataDownloaded <- date()
+dataDownloaded
+
+housingIdahoData <- read.csv("./data/housingIdaho.csv")
+head(housingIdahoData)
+
+DT <- data.table(housingIdahoData)
+dim(DT)
+head(DT)
+str(DT)
+DT[ , a := VAL > 24]
+DT[,table(VAL)]
+
+DT[DT$VAL=="24", ]
+
+#Q2.
+#Q3.
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FDATA.gov_NGAP.xlsx", destfile = "./data/ngap2.xlsx")
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FDATA.gov_NGAP.xlsx", destfile = "./data/NGAP.xlsx")
+NGAPData <- read.csv("./data/NGAP.csv")
+head(NGAPData)
+
+DT <- data.table(housingIdahoData)
+
+#Q4.
 
 
 
 # Week 2: Introduction to the most common data storage systems and the appropriate tools to extract data from web or from databases like MySQL ------------------------------------------------------------------
 
+## Reading from MySQL
+
+## Reading from HDF5
+
+## Reading from the Web
+
+# Webscraping
+# https://en.wikipedia.org/wiki/Web_scraping
+
+con = url("http://scholar.google.com/citations?user==HI-I6C0AAAAJ&hl=en")
+htmlCode = readLines(con)
+close(con)
+htmlCode
+
+library(XML)
+url <- "http://scholar.google.com/citations?user==HI-I6C0AAAAJ&hl=en"
+html <- htmlTreeParse(url, useInternalNodes = T)
+
+xpathSApply(html, "//title", xmlValue)
+xpathSApply(html, "//td[@id='col-citeby']", xmlValue)
+
+
+
+## Reading from APIs
+
+## Reading from other sources
+
+
+# Quiz Week 2 -------------------------------------------------------------
+
+
+
 # Week 3: Organizing, merging and managing the data ------------------------------------------------------------------
 
+# Quiz Week 3 -------------------------------------------------------------
+
+
+
 # Week 4: Text and date manipulation in R ------------------------------------------------------------------
+
+# Quiz Week 4 -------------------------------------------------------------
+
+
+
 
 
 ###########
